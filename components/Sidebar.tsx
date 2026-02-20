@@ -31,7 +31,7 @@ export default function Sidebar({ posts }: { posts: Post[] }) {
           ☰
         </button>
         <Link href="/" style={{ fontWeight: 700, fontSize: 15 }}>
-          minsu.dev
+          toylap.me
         </Link>
         <div style={{ width: 36 }} />
       </div>
@@ -48,7 +48,7 @@ export default function Sidebar({ posts }: { posts: Post[] }) {
           <Link href="/" className="sidebar-logo" onClick={close}>
             <div className="sidebar-logo-icon">M</div>
             <div className="sidebar-logo-text">
-              minsu.dev
+              toylap.me
               <small>Notion Powered Blog</small>
             </div>
           </Link>

@@ -6,15 +6,15 @@ import { getAllPosts } from '@/lib/notion';
 
 export const metadata: Metadata = {
   title: {
-    default: 'minsu.dev — 개발 블로그',
-    template: '%s — minsu.dev',
+    default: 'toylap.me — 개발 블로그',
+    template: '%s — toylap.me',
   },
   description: '개발하며 배운 것들을 기록합니다.',
   openGraph: {
     type: 'website',
     locale: 'ko_KR',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://minsu.dev',
-    siteName: 'minsu.dev',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://toylap.me',
+    siteName: 'toylap.me',
   },
   robots: { index: true, follow: true },
 };

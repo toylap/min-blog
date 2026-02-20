@@ -25,7 +25,7 @@ export default async function HomePage({ searchParams }: Props) {
   return (
     <div className="content-wrapper">
       <section className="hero">
-        <div className="hero-label">🔥 Notion API 기반 블로그</div>
+        <div className="hero-label">🔥 MinLog</div>
         <h1>
           Code, <span className="highlight">Think</span>, Write.
         </h1>
@@ -58,7 +58,7 @@ export default async function HomePage({ searchParams }: Props) {
       </section>
 
       <footer className="main-footer">
-        <span>© 2026 minsu.dev</span>
+        <span>© 2026 toylap.me</span>
       </footer>
     </div>
   );

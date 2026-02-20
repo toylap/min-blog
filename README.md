@@ -1,4 +1,4 @@
-# minsu.dev — Notion 기반 블로그
+# toylap.me — Notion 기반 블로그
 
 Notion을 CMS + DB로 사용하는 Next.js 블로그.  
 별도 서버 없이 Vercel 서버리스 함수만으로 동작합니다.
@@ -138,8 +138,8 @@ NOTION_COMMENTS_DB_ID=Comments_DB_ID
 NOTION_LIKES_DB_ID=Likes_DB_ID
 NOTION_VIEWS_DB_ID=Views_DB_ID
 
-NEXT_PUBLIC_SITE_URL=https://minsu.dev
-NEXT_PUBLIC_SITE_NAME=minsu.dev
+NEXT_PUBLIC_SITE_URL=https://toylap.me
+NEXT_PUBLIC_SITE_NAME=toylap.me
 ```
 
 ### 7. 로컬 실행
@@ -283,9 +283,3 @@ POST /v1/pages  ← parent에 data_source_id 사용
 - [x] 반응형 디자인 (모바일 사이드바)
 - [x] 다크 테마
 - [x] 카테고리 필터링
-
----
-
-## 라이선스
-
-MIT
