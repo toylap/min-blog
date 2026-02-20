@@ -112,7 +112,7 @@ async function createPage(dbId: string, properties: Record<string, any>) {
 export async function getAllPosts(): Promise<Post[]> {
   const { results } = await queryDS(POSTS_DB, {
     filter: { property: 'Published', checkbox: { equals: true } },
-    sorts: [{ property: 'Date', direction: 'descending' }],
+    sorts: [{ property: 'CreateDt', direction: 'descending' }],
   });
   return results.map(pageToPost);
 }
@@ -125,7 +125,7 @@ export async function searchPosts(query: string): Promise<Post[]> {
         { property: 'Title', title: { contains: query } },
       ],
     },
-    sorts: [{ property: 'Date', direction: 'descending' }],
+    sorts: [{ property: 'CreateDt', direction: 'descending' }],
   });
   return results.map(pageToPost);
 }
