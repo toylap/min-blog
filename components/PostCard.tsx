@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Post } from '@/lib/notion';
 
 export default function PostCard({ post }: { post: Post }) {
-  const date = new Date(post.date).toLocaleDateString('ko-KR', {
+  const date = new Date(post.createDt).toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -11,7 +11,7 @@ export default function PostCard({ post }: { post: Post }) {
   return (
     <Link href={`/posts/${post.slug}`} className="post-item">
       <div className="post-item-meta">
-        <time className="post-item-date" dateTime={post.date}>
+        <time className="post-item-date" dateTime={post.createDt}>
           {date}
         </time>
         {post.category && (

@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       title: post.title,
       description: post.description,
-      publishedTime: post.date,
+      publishedTime: post.createDt,
       tags: post.tags,
     },
   };
@@ -41,7 +41,7 @@ export default async function PostPage({ params }: Props) {
   const post = await getPostBySlug(slug);
   if (!post) notFound();
 
-  const date = new Date(post.date).toLocaleDateString('ko-KR', {
+  const date = new Date(post.createDt).toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -56,7 +56,7 @@ export default async function PostPage({ params }: Props) {
       {/* 헤더 */}
       <header className="post-detail-header">
         <div className="post-item-meta" style={{ marginBottom: 14 }}>
-          <time className="post-item-date" dateTime={post.date}>
+          <time className="post-item-date" dateTime={post.createDt}>
             {date}
           </time>
           {post.tags.map((t) => (

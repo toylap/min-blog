@@ -84,7 +84,7 @@ Notion에서 **Full Page Database** 4개를 만듭니다.
 | Name | 텍스트 | 작성자 이름 |
 | Password | 텍스트 | 삭제용 비밀번호 |
 | Body | 텍스트 | 댓글 내용 |
-| CreatedAt | 날짜 | 작성 시간 |
+| CreateDt | 날짜 | 작성 시간 |
 
 #### ③ Likes DB (좋아요)
 
@@ -93,7 +93,7 @@ Notion에서 **Full Page Database** 4개를 만듭니다.
 | Title | 제목 (기본) | 자동 생성됨 |
 | PostSlug | 텍스트 | 어떤 글의 좋아요인지 |
 | UserHash | 텍스트 | 사용자 식별 해시 |
-| CreatedAt | 날짜 | 좋아요 시간 |
+| CreateDt | 날짜 | 좋아요 시간 |
 
 #### ④ Views DB (조회수)
 

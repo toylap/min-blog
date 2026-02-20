@@ -31,7 +31,7 @@ export interface Post {
   title: string;
   slug: string;
   description: string;
-  date: string;
+  createDt: string;
   tags: string[];
   category: string;
   published: boolean;
@@ -47,7 +47,7 @@ export interface Comment {
   parentId: string | null;
   name: string;
   body: string;
-  createdAt: string;
+  createDt: string;
   replies?: Comment[];
 }
 
@@ -153,7 +153,7 @@ function pageToPost(page: any): Post {
     title: getTitle(p.Title),
     slug: getText(p.Slug) || page.id,
     description: getText(p.Description),
-    date: p.Date?.date?.start || '',
+    createDt: p.Date?.createDt?.start || '',
     tags: p.Tags?.multi_select?.map((t: any) => t.name) || [],
     category: p.Tags?.multi_select?.[0]?.name || '',
     published: true,
@@ -194,7 +194,7 @@ export async function createComment(data: {
     Name: { rich_text: [{ text: { content: data.name } }] },
     Password: { rich_text: [{ text: { content: data.password } }] },
     Body: { rich_text: [{ text: { content: data.body } }] },
-    CreatedAt: { date: { start: new Date().toISOString() } },
+    CreateDt: { createDt: { start: new Date().toISOString() } },
   });
   return pageToComment(res);
 }
@@ -214,7 +214,7 @@ function pageToComment(page: any): Comment {
     parentId: getText(p.ParentId) || null,
     name: getText(p.Name),
     body: getText(p.Body),
-    createdAt: p.CreatedAt?.date?.start || page.created_time,
+    createDt: p.CreateDt?.date?.start || page.created_time,
   };
 }
 
@@ -253,7 +253,7 @@ export async function toggleLike(postSlug: string, userHash: string): Promise<Li
       Title: { title: [{ text: { content: `${postSlug}:${userHash}` } }] },
       PostSlug: { rich_text: [{ text: { content: postSlug } }] },
       UserHash: { rich_text: [{ text: { content: userHash } }] },
-      CreatedAt: { date: { start: new Date().toISOString() } },
+      CreateDt: { createDt: { start: new Date().toISOString() } },
     });
   }
 

@@ -80,7 +80,7 @@ export default function SearchBar() {
               <div className="search-result-title">{post.title}</div>
               <div className="search-result-desc">{post.description}</div>
               <div className="search-result-meta">
-                <span>{post.date}</span>
+                <span>{post.createDt}</span>
                 {post.tags.map((t) => (
                   <span key={t}>#{t}</span>
                 ))}

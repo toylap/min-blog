@@ -127,7 +127,7 @@ function CommentItem({
   const [delPw, setDelPw] = useState('');
   const del = useDeleteComment();
 
-  const dateStr = new Date(comment.createdAt).toLocaleDateString('ko-KR', {
+  const dateStr = new Date(comment.createDt).toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -208,7 +208,7 @@ function CommentItem({
             <div className="comment-avatar reply-avatar">{r.name[0]}</div>
             <span className="comment-author">{r.name}</span>
             <span className="comment-time">
-              {new Date(r.createdAt).toLocaleDateString('ko-KR', {
+              {new Date(r.createDt).toLocaleDateString('ko-KR', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',

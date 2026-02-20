@@ -270,3 +270,26 @@ img { max-width: 100%; }
   .mobile-header { display: none !important; }
   .sidebar-overlay { display: none !important; }
 }
+
+/* ===== Notion Colors (Dark Theme) ===== */
+/* 텍스트 색상 */
+.notion-color-gray { color: #979a9b; }
+.notion-color-brown { color: #b4826f; }
+.notion-color-orange { color: #e8883a; }
+.notion-color-yellow { color: #e8c44e; }
+.notion-color-green { color: #4dab9a; }
+.notion-color-blue { color: #5b9bd5; }
+.notion-color-purple { color: #a07cca; }
+.notion-color-pink { color: #d06da3; }
+.notion-color-red { color: #e05555; }
+
+/* 배경 색상 */
+.notion-color-gray_background { background: rgba(155, 154, 151, 0.15); padding: 2px 6px; border-radius: 4px; }
+.notion-color-brown_background { background: rgba(180, 130, 111, 0.15); padding: 2px 6px; border-radius: 4px; }
+.notion-color-orange_background { background: rgba(232, 136, 58, 0.15); padding: 2px 6px; border-radius: 4px; }
+.notion-color-yellow_background { background: rgba(232, 196, 78, 0.15); padding: 2px 6px; border-radius: 4px; }
+.notion-color-green_background { background: rgba(77, 171, 154, 0.15); padding: 2px 6px; border-radius: 4px; }
+.notion-color-blue_background { background: rgba(91, 155, 213, 0.15); padding: 2px 6px; border-radius: 4px; }
+.notion-color-purple_background { background: rgba(160, 124, 202, 0.15); padding: 2px 6px; border-radius: 4px; }
+.notion-color-pink_background { background: rgba(208, 109, 163, 0.15); padding: 2px 6px; border-radius: 4px; }
+.notion-color-red_background { background: rgba(224, 85, 85, 0.15); padding: 2px 6px; border-radius: 4px; }
