@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import type { ExtendedRecordMap } from 'notion-types';
 
 // react-notion-x 기본 스타일
-import 'react-notion-x/src/styles.css';
+import 'react-notion-x/styles.css';
 
 // 코드 하이라이팅, 수식 등은 동적 임포트 (번들 사이즈 최적화)
 const Code = dynamic(
