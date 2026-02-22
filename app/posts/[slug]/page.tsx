@@ -5,6 +5,7 @@ import { getAllPosts, getPostBySlug } from '@/lib/notion';
 import Comments from '@/components/Comments';
 import LikeButton from '@/components/LikeButton';
 import ViewCounter from '@/components/ViewCounter';
+import NotionPage from '@/components/NotionPage';
 
 export const revalidate = 60;
 
@@ -75,11 +76,10 @@ export default async function PostPage({ params }: Props) {
         </div>
       </header>
 
-      {/* 본문 */}
-      <article
-        className="md-body"
-        dangerouslySetInnerHTML={{ __html: post.content }}
-      />
+      {/* 본문 - Notion 원본 렌더링 */}
+      <article className="notion-renderer-wrapper">
+        <NotionPage recordMap={post.recordMap} />
+      </article>
 
       {/* 하단 좋아요 */}
       <div className="post-bottom-like">
