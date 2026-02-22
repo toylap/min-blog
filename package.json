@@ -11,8 +11,11 @@
     "@notionhq/client": "^5.0.0",
     "@tanstack/react-query": "^5.60.0",
     "next": "^15.5.12",
+    "notion-client": "^7.8.2",
+    "notion-types": "^7.8.2",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
+    "react-notion-x": "^7.8.2",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
