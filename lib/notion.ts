@@ -13,11 +13,16 @@
  */
 
 import { Client } from '@notionhq/client';
+import { NotionAPI } from 'notion-client';
+import type { ExtendedRecordMap } from 'notion-types';
 
 const notion = new Client({
   auth: process.env.NOTION_TOKEN,
   notionVersion: '2025-09-03',
 });
+
+// 비공식 API (react-notion-x 렌더링용 recordMap 조회)
+const notionAPI = new NotionAPI();
 
 const POSTS_DB = process.env.NOTION_DATABASE_ID!;
 const COMMENTS_DB = process.env.NOTION_COMMENTS_DB_ID!;
@@ -38,7 +43,7 @@ export interface Post {
 }
 
 export interface PostWithContent extends Post {
-  content: string;
+  recordMap: ExtendedRecordMap;
 }
 
 export interface Comment {
@@ -142,8 +147,8 @@ export async function getPostBySlug(slug: string): Promise<PostWithContent | nul
   if (!results.length) return null;
 
   const post = pageToPost(results[0]);
-  const blocks = await getAllBlocks(post.id);
-  return { ...post, content: blocksToHtml(blocks) };
+  const recordMap = await notionAPI.getPage(post.id);
+  return { ...post, recordMap };
 }
 
 function pageToPost(page: any): Post {
