@@ -160,7 +160,7 @@ function pageToPost(page: any): Post {
     title: getTitle(p.Title),
     slug: getText(p.Slug) || page.id,
     description: getText(p.Description),
-    createDt: p.Date?.createDt?.start || '',
+    createDt: p.CreateDt?.date?.start || '',
     tags: p.Tags?.multi_select?.map((t: any) => t.name) || [],
     category: p.Tags?.multi_select?.[0]?.name || '',
     published: true,
@@ -201,7 +201,7 @@ export async function createComment(data: {
     Name: { rich_text: [{ text: { content: data.name } }] },
     Password: { rich_text: [{ text: { content: data.password } }] },
     Body: { rich_text: [{ text: { content: data.body } }] },
-    CreateDt: { createDt: { start: new Date().toISOString() } },
+    CreateDt: { date: { start: new Date().toISOString() } },
   });
   return pageToComment(res);
 }
@@ -260,7 +260,7 @@ export async function toggleLike(postSlug: string, userHash: string): Promise<Li
       Title: { title: [{ text: { content: `${postSlug}:${userHash}` } }] },
       PostSlug: { rich_text: [{ text: { content: postSlug } }] },
       UserHash: { rich_text: [{ text: { content: userHash } }] },
-      CreateDt: { createDt: { start: new Date().toISOString() } },
+      CreateDt: { date: { start: new Date().toISOString() } },
     });
   }
 
