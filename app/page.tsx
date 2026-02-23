@@ -27,9 +27,13 @@ export default async function HomePage({ searchParams }: Props) {
       <section className="hero">
         <div className="hero-label">🔥 MinLog</div>
         <h1>
-          Code, <span className="highlight">Think</span>, Write.
+          Developer MinLog
         </h1>
-        <p>개발하며 배운 것들을 기록합니다.</p>
+        <p>
+          항상 배움에 감사합니다.
+          <br/>
+          틀린 부분과 좋은 방향이 있다면 적극적으로 의견을 주세요.
+        </p>
       </section>
 
       <section>
