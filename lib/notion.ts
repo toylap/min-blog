@@ -22,7 +22,9 @@ const notion = new Client({
 });
 
 // 비공식 API (react-notion-x 렌더링용 recordMap 조회)
-const notionAPI = new NotionAPI();
+const notionAPI = new NotionAPI({
+  authToken: process.env.NOTION_TOKEN_V2,
+});
 
 const POSTS_DB = process.env.NOTION_DATABASE_ID!;
 const COMMENTS_DB = process.env.NOTION_COMMENTS_DB_ID!;
