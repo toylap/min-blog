@@ -253,6 +253,7 @@ export async function toggleLike(postSlug: string, userHash: string): Promise<Li
       Title: { title: [{ text: { content: `${postSlug}:${userHash}` } }] },
       PostSlug: { rich_text: [{ text: { content: postSlug } }] },
       UserHash: { rich_text: [{ text: { content: userHash } }] },
+      CreateDt: { date: { start: new Date().toISOString() } },
     });
   }
 
