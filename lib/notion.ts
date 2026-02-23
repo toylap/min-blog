@@ -167,7 +167,7 @@ function pageToPost(page: any): Post {
 export async function getComments(postSlug: string): Promise<Comment[]> {
   const { results } = await queryDS(COMMENTS_DB, {
     filter: { property: 'PostSlug', rich_text: { equals: postSlug } },
-    sorts: [{ property: 'CreatedAt', direction: 'ascending' }],
+    sorts: [{ property: 'CreateDt', direction: 'ascending' }],
   });
 
   const flat = results.map(pageToComment);
