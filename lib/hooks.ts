@@ -42,7 +42,6 @@ export function useCreateComment() {
       postSlug: string;
       parentId?: string;
       name: string;
-      password: string;
       content: string;
     }) => {
       const res = await fetch('/api/comments', {
@@ -62,7 +61,7 @@ export function useCreateComment() {
 export function useDeleteComment() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { commentId: string; password: string; postSlug: string }) => {
+    mutationFn: async (data: { commentId: string; postSlug: string }) => {
       const res = await fetch('/api/comments', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
