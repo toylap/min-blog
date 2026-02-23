@@ -46,10 +46,12 @@ export default function Sidebar({ posts }: { posts: Post[] }) {
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <Link href="/" className="sidebar-logo" onClick={close}>
-            <div className="sidebar-logo-icon">M</div>
+            <div className="sidebar-logo-icon"></div>
             <div className="sidebar-logo-text">
-              toylap.me
-              <small>Notion Powered Blog</small>
+              최민수
+              <small>
+                안녕하세요. 웹 개발 3년차입니다.
+              </small>
             </div>
           </Link>
         </div>
