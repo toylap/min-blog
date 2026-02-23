@@ -82,7 +82,6 @@ Notion에서 **Full Page Database** 4개를 만듭니다.
 | PostSlug | 텍스트 | 어떤 글의 댓글인지 |
 | ParentId | 텍스트 | 대댓글이면 부모 댓글 ID |
 | Name | 텍스트 | 작성자 이름 |
-| Password | 텍스트 | 삭제용 비밀번호 |
 | Body | 텍스트 | 댓글 내용 |
 | CreateDt | 날짜 | 작성 시간 |
 

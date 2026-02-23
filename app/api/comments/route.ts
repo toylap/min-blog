@@ -14,12 +14,12 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST /api/comments { postSlug, parentId?, name, password, content }
+// POST /api/comments { postSlug, parentId?, name, content }
 export async function POST(req: NextRequest) {
   try {
-    const { postSlug, parentId, name, password, content } = await req.json();
+    const { postSlug, parentId, name, content } = await req.json();
 
-    if (!postSlug || !name || !password || !content) {
+    if (!postSlug || !name || !content) {
       return NextResponse.json({ error: '필수 항목 누락' }, { status: 400 });
     }
     if (name.length > 20) {
@@ -33,7 +33,6 @@ export async function POST(req: NextRequest) {
       postSlug,
       parentId: parentId || undefined,
       name,
-      password,
       body: content,
     });
     return NextResponse.json({ comment });
@@ -43,16 +42,15 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// DELETE /api/comments { commentId, password }
+// DELETE /api/comments { commentId }
 export async function DELETE(req: NextRequest) {
   try {
-    const { commentId, password } = await req.json();
-    if (!commentId || !password) {
+    const { commentId } = await req.json();
+    if (!commentId) {
       return NextResponse.json({ error: '필수 항목 누락' }, { status: 400 });
     }
 
-    const ok = await deleteComment(commentId, password);
-    if (!ok) return NextResponse.json({ error: '비밀번호 불일치' }, { status: 403 });
+    await deleteComment(commentId);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Comments DELETE error:', error);

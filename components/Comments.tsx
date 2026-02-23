@@ -44,24 +44,21 @@ function CommentForm({
   onCancel?: () => void;
 }) {
   const [name, setName] = useState('');
-  const [pw, setPw] = useState('');
   const [body, setBody] = useState('');
   const create = useCreateComment();
 
   const submit = () => {
-    if (!name.trim() || !pw.trim() || !body.trim()) return;
+    if (!name.trim() || !body.trim()) return;
     create.mutate(
       {
         postSlug,
         parentId,
         name: name.trim(),
-        password: pw.trim(),
         content: body.trim(),
       },
       {
         onSuccess: () => {
           setName('');
-          setPw('');
           setBody('');
           onCancel?.();
         },
@@ -77,14 +74,6 @@ function CommentForm({
           placeholder="이름"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          maxLength={20}
-        />
-        <input
-          className="comment-input"
-          type="password"
-          placeholder="비밀번호 (삭제 시 필요)"
-          value={pw}
-          onChange={(e) => setPw(e.target.value)}
           maxLength={20}
         />
       </div>
@@ -124,7 +113,6 @@ function CommentItem({
 }) {
   const [showReply, setShowReply] = useState(false);
   const [showDel, setShowDel] = useState(false);
-  const [delPw, setDelPw] = useState('');
   const del = useDeleteComment();
 
   const dateStr = new Date(comment.createDt).toLocaleDateString('ko-KR', {
@@ -136,15 +124,12 @@ function CommentItem({
   });
 
   const handleDelete = () => {
-    if (!delPw.trim()) return;
     del.mutate(
-      { commentId: comment.id, password: delPw.trim(), postSlug },
+      { commentId: comment.id, postSlug },
       {
         onSuccess: () => {
           setShowDel(false);
-          setDelPw('');
         },
-        onError: () => alert('비밀번호가 틀립니다.'),
       }
     );
   };
@@ -172,22 +157,18 @@ function CommentItem({
         </button>
       </div>
 
-      {/* 삭제 비밀번호 입력 */}
+      {/* 삭제 확인 */}
       {showDel && (
         <div className="comment-delete-form">
-          <input
-            className="comment-input"
-            type="password"
-            placeholder="비밀번호"
-            value={delPw}
-            onChange={(e) => setDelPw(e.target.value)}
-          />
           <button
             className="btn-del"
             onClick={handleDelete}
             disabled={del.isPending}
           >
-            {del.isPending ? '삭제 중...' : '삭제'}
+            {del.isPending ? '삭제 중...' : '삭제 확인'}
+          </button>
+          <button className="btn-cancel" onClick={() => setShowDel(false)}>
+            취소
           </button>
         </div>
       )}

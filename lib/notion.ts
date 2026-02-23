@@ -174,7 +174,7 @@ function pageToPost(page: any): Post {
 export async function getComments(postSlug: string): Promise<Comment[]> {
   const { results } = await queryDS(COMMENTS_DB, {
     filter: { property: 'PostSlug', rich_text: { equals: postSlug } },
-    sorts: [{ property: 'CreatedAt', direction: 'ascending' }],
+    sorts: [{ property: 'CreateDt', direction: 'ascending' }],
   });
 
   const flat = results.map(pageToComment);
@@ -191,7 +191,6 @@ export async function createComment(data: {
   postSlug: string;
   parentId?: string;
   name: string;
-  password: string;
   body: string;
 }): Promise<Comment> {
   const res = await createPage(COMMENTS_DB, {
@@ -199,16 +198,13 @@ export async function createComment(data: {
     PostSlug: { rich_text: [{ text: { content: data.postSlug } }] },
     ParentId: { rich_text: [{ text: { content: data.parentId || '' } }] },
     Name: { rich_text: [{ text: { content: data.name } }] },
-    Password: { rich_text: [{ text: { content: data.password } }] },
     Body: { rich_text: [{ text: { content: data.body } }] },
     CreateDt: { date: { start: new Date().toISOString() } },
   });
   return pageToComment(res);
 }
 
-export async function deleteComment(commentId: string, password: string): Promise<boolean> {
-  const page = (await notion.pages.retrieve({ page_id: commentId })) as any;
-  if (getText(page.properties.Password) !== password) return false;
+export async function deleteComment(commentId: string): Promise<boolean> {
   await notion.pages.update({ page_id: commentId, in_trash: true });
   return true;
 }
