@@ -300,6 +300,54 @@ export async function incrementView(postSlug: string): Promise<ViewCount> {
 // BLOCKS → HTML 변환
 // ============================================================
 
+import Prism from 'prismjs';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-jsx';
+import 'prismjs/components/prism-tsx';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-c';
+import 'prismjs/components/prism-cpp';
+import 'prismjs/components/prism-csharp';
+import 'prismjs/components/prism-go';
+import 'prismjs/components/prism-rust';
+import 'prismjs/components/prism-sql';
+import 'prismjs/components/prism-yaml';
+import 'prismjs/components/prism-markdown';
+import 'prismjs/components/prism-docker';
+import 'prismjs/components/prism-graphql';
+
+// Notion 언어명 → Prism 언어명 매핑
+const LANG_MAP: Record<string, string> = {
+  'javascript': 'javascript', 'js': 'javascript',
+  'typescript': 'typescript', 'ts': 'typescript',
+  'jsx': 'jsx', 'tsx': 'tsx',
+  'css': 'css', 'html': 'markup', 'xml': 'markup',
+  'json': 'json', 'bash': 'bash', 'shell': 'bash', 'sh': 'bash',
+  'python': 'python', 'py': 'python',
+  'java': 'java', 'c': 'c', 'c++': 'cpp', 'cpp': 'cpp',
+  'c#': 'csharp', 'csharp': 'csharp',
+  'go': 'go', 'rust': 'rust', 'sql': 'sql',
+  'yaml': 'yaml', 'yml': 'yaml',
+  'markdown': 'markdown', 'md': 'markdown',
+  'dockerfile': 'docker', 'docker': 'docker',
+  'graphql': 'graphql',
+  'plain text': 'text', 'text': 'text',
+};
+
+function highlight(code: string, lang: string): string {
+  const prismLang = LANG_MAP[lang.toLowerCase()] || lang.toLowerCase();
+  const grammar = Prism.languages[prismLang];
+  if (grammar) {
+    return Prism.highlight(code, grammar, prismLang);
+  }
+  return esc(code);
+}
+
 async function getAllBlocks(pageId: string): Promise<any[]> {
   const blocks: any[] = [];
   let cursor: string | undefined;
@@ -357,50 +405,196 @@ function blockToHtml(b: any): string {
   const ch = b._children ? blocksToHtml(b._children) : '';
 
   switch (b.type) {
-    case 'heading_1':
-      return `<h1 id="${slugify(plain(d.rich_text))}">${rich(d.rich_text)}</h1>`;
-    case 'heading_2':
-      return `<h2 id="${slugify(plain(d.rich_text))}">${rich(d.rich_text)}</h2>`;
-    case 'heading_3':
-      return `<h3 id="${slugify(plain(d.rich_text))}">${rich(d.rich_text)}</h3>`;
+    // ===== Headings =====
+    case 'heading_1': {
+      const color = d.color && d.color !== 'default' ? ` class="notion-color-${d.color}"` : '';
+      return `<h1 id="${slugify(plain(d.rich_text))}"${color}>${rich(d.rich_text)}</h1>`;
+    }
+    case 'heading_2': {
+      const color = d.color && d.color !== 'default' ? ` class="notion-color-${d.color}"` : '';
+      return `<h2 id="${slugify(plain(d.rich_text))}"${color}>${rich(d.rich_text)}</h2>`;
+    }
+    case 'heading_3': {
+      const color = d.color && d.color !== 'default' ? ` class="notion-color-${d.color}"` : '';
+      return `<h3 id="${slugify(plain(d.rich_text))}"${color}>${rich(d.rich_text)}</h3>`;
+    }
+
+    // ===== Text =====
     case 'paragraph': {
       const t = rich(d.rich_text);
-      return t ? `<p>${t}</p>` : '<p><br></p>';
+      const color = d.color && d.color !== 'default' ? ` class="notion-color-${d.color}"` : '';
+      return t ? `<p${color}>${t}${ch}</p>` : '<div class="notion-blank">&nbsp;</div>';
     }
-    case 'bulleted_list_item':
-      return `<li>${rich(d.rich_text)}${ch}</li>`;
-    case 'numbered_list_item':
-      return `<li>${rich(d.rich_text)}${ch}</li>`;
-    case 'code':
-      return `<pre><code class="language-${d.language || ''}">${esc(plain(d.rich_text))}</code></pre>`;
-    case 'quote':
-      return `<blockquote>${rich(d.rich_text)}${ch}</blockquote>`;
-    case 'callout':
-      return `<div class="callout"><span class="callout-icon">${d.icon?.emoji || '💡'}</span><div>${rich(d.rich_text)}${ch}</div></div>`;
+
+    // ===== Lists (중첩 지원) =====
+    case 'bulleted_list_item': {
+      const color = d.color && d.color !== 'default' ? ` class="notion-color-${d.color}"` : '';
+      // 자식이 리스트면 중첩 ul/ol 생성
+      const nested = b._children ? wrapChildList(b._children) : '';
+      return `<li${color}>${rich(d.rich_text)}${nested}</li>`;
+    }
+    case 'numbered_list_item': {
+      const color = d.color && d.color !== 'default' ? ` class="notion-color-${d.color}"` : '';
+      const nested = b._children ? wrapChildList(b._children) : '';
+      return `<li${color}>${rich(d.rich_text)}${nested}</li>`;
+    }
+
+    // ===== Code (구문 하이라이트) =====
+    case 'code': {
+      const lang = d.language || 'plain text';
+      const langLabel = lang === 'plain text' ? '' : lang;
+      const code = plain(d.rich_text);
+      const highlighted = highlight(code, lang);
+      const caption = d.caption?.length ? `<div class="code-caption">${rich(d.caption)}</div>` : '';
+      return `<div class="code-block">${langLabel ? `<div class="code-header"><span class="code-lang">${esc(langLabel)}</span></div>` : ''}<pre class="language-${LANG_MAP[lang.toLowerCase()] || lang}"><code>${highlighted}</code></pre>${caption}</div>`;
+    }
+
+    // ===== Quote & Callout =====
+    case 'quote': {
+      const color = d.color && d.color !== 'default' ? ` notion-color-${d.color}` : '';
+      return `<blockquote class="notion-quote${color}">${rich(d.rich_text)}${ch}</blockquote>`;
+    }
+    case 'callout': {
+      const color = d.color && d.color !== 'default' ? ` notion-color-${d.color}` : '';
+      const icon = d.icon?.emoji || d.icon?.external?.url ? `<span class="callout-icon">${d.icon.emoji || `<img src="${d.icon.external.url}" alt="" width="20">`}</span>` : '';
+      return `<div class="callout${color}">${icon}<div class="callout-content">${rich(d.rich_text)}${ch}</div></div>`;
+    }
+
+    // ===== Toggle =====
     case 'toggle':
-      return `<details><summary>${rich(d.rich_text)}</summary>${ch}</details>`;
+      return `<details class="notion-toggle"><summary>${rich(d.rich_text)}</summary><div class="toggle-content">${ch}</div></details>`;
+
     case 'divider':
-      return '<hr>';
+      return '<hr class="notion-hr">';
+
+    // ===== Image =====
     case 'image': {
       const url = d.file?.url || d.external?.url || '';
-      const cap = d.caption?.length ? plain(d.caption) : '';
-      return `<figure><img src="${url}" alt="${cap}" loading="lazy">${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
+      const cap = d.caption?.length ? rich(d.caption) : '';
+      return `<figure class="notion-image"><img src="${url}" alt="${d.caption?.length ? esc(plain(d.caption)) : ''}" loading="lazy">${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
     }
-    case 'bookmark':
-      return `<a href="${d.url}" class="bookmark" target="_blank" rel="noopener">${d.url}</a>`;
-    case 'to_do':
-      return `<div class="todo"><input type="checkbox" ${d.checked ? 'checked' : ''} disabled>${rich(d.rich_text)}</div>`;
-    case 'table':
-      return `<table>${ch}</table>`;
+
+    // ===== Bookmark =====
+    case 'bookmark': {
+      const cap = d.caption?.length ? `<span class="bookmark-desc">${rich(d.caption)}</span>` : '';
+      return `<div class="notion-bookmark"><a href="${d.url}" target="_blank" rel="noopener"><span class="bookmark-title">${d.url}</span>${cap}<span class="bookmark-link">${new URL(d.url).hostname}</span></a></div>`;
+    }
+
+    // ===== Link Preview =====
+    case 'link_preview':
+      return `<div class="notion-bookmark"><a href="${d.url}" target="_blank" rel="noopener"><span class="bookmark-title">${d.url}</span><span class="bookmark-link">${(() => { try { return new URL(d.url).hostname; } catch { return d.url; } })()}</span></a></div>`;
+
+    // ===== To-do =====
+    case 'to_do': {
+      const checked = d.checked ? ' checked' : '';
+      return `<div class="notion-todo${d.checked ? ' done' : ''}"><input type="checkbox"${checked} disabled><span>${rich(d.rich_text)}</span></div>`;
+    }
+
+    // ===== Table =====
+    case 'table': {
+      const hasColHeader = d.has_column_header;
+      const hasRowHeader = d.has_row_header;
+      if (!b._children) return '';
+      const rows = b._children.map((row: any, i: number) => {
+        const cells = row.table_row?.cells || [];
+        const cellTag = (i === 0 && hasColHeader) ? 'th' : 'td';
+        return `<tr>${cells.map((c: any[], j: number) => {
+          const tag = (j === 0 && hasRowHeader && cellTag !== 'th') ? 'th' : cellTag;
+          return `<${tag}>${rich(c)}</${tag}>`;
+        }).join('')}</tr>`;
+      });
+      return `<div class="notion-table-wrap"><table class="notion-table">${rows.join('')}</table></div>`;
+    }
     case 'table_row':
-      return `<tr>${(d.cells as any[][]).map((c: any[]) => `<td>${rich(c)}</td>`).join('')}</tr>`;
-    case 'video':
-      return `<video src="${d.file?.url || d.external?.url || ''}" controls></video>`;
+      return ''; // table에서 직접 처리
+
+    // ===== Column Layout =====
+    case 'column_list':
+      return `<div class="notion-columns">${(b._children || []).map((col: any) => blockToHtml(col)).join('')}</div>`;
+    case 'column':
+      return `<div class="notion-column">${ch}</div>`;
+
+    // ===== Video =====
+    case 'video': {
+      const url = d.external?.url || d.file?.url || '';
+      const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]+)/);
+      if (ytMatch) {
+        return `<div class="notion-video"><iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+      }
+      return `<div class="notion-video"><video src="${url}" controls preload="metadata"></video></div>`;
+    }
+
+    // ===== Embed =====
     case 'embed':
-      return `<iframe src="${d.url}" loading="lazy" style="width:100%;height:400px;border:none;border-radius:8px"></iframe>`;
+      return `<div class="notion-embed"><iframe src="${d.url}" loading="lazy" allowfullscreen></iframe></div>`;
+
+    // ===== Equation (블록 수식) =====
+    case 'equation':
+      return `<div class="notion-equation"><code>${esc(d.expression)}</code></div>`;
+
+    // ===== Synced Block =====
+    case 'synced_block':
+      return ch;
+
+    // ===== Child Page / Database =====
+    case 'child_page':
+      return `<div class="notion-child-page">📄 ${esc(d.title)}</div>`;
+    case 'child_database':
+      return `<div class="notion-child-page">🗃️ ${esc(d.title)}</div>`;
+
+    // ===== File / PDF =====
+    case 'file': {
+      const fileUrl = d.file?.url || d.external?.url || '';
+      const fileName = d.name || d.caption?.length ? plain(d.caption) : fileUrl;
+      return `<div class="notion-file"><a href="${fileUrl}" target="_blank" rel="noopener">📎 ${esc(fileName)}</a></div>`;
+    }
+    case 'pdf': {
+      const pdfUrl = d.file?.url || d.external?.url || '';
+      return `<div class="notion-embed"><iframe src="${pdfUrl}" loading="lazy"></iframe></div>`;
+    }
+
+    // ===== Audio =====
+    case 'audio': {
+      const audioUrl = d.file?.url || d.external?.url || '';
+      return `<audio src="${audioUrl}" controls preload="metadata" style="width:100%"></audio>`;
+    }
+
+    // ===== Table of Contents =====
+    case 'table_of_contents':
+      return ''; // TOC는 별도로 처리
+
+    // ===== Breadcrumb =====
+    case 'breadcrumb':
+      return '';
+
     default:
       return '';
   }
+}
+
+// 자식 블록에서 리스트 아이템을 중첩 ul/ol로 감싸기
+function wrapChildList(children: any[]): string {
+  let html = '';
+  let list: { tag: string; items: string[] } | null = null;
+
+  for (const c of children) {
+    if (c.type === 'bulleted_list_item' || c.type === 'numbered_list_item') {
+      const tag = c.type === 'bulleted_list_item' ? 'ul' : 'ol';
+      if (!list || list.tag !== tag) {
+        if (list) html += `<${list.tag}>${list.items.join('')}</${list.tag}>`;
+        list = { tag, items: [] };
+      }
+      list.items.push(blockToHtml(c));
+    } else {
+      if (list) {
+        html += `<${list.tag}>${list.items.join('')}</${list.tag}>`;
+        list = null;
+      }
+      html += blockToHtml(c);
+    }
+  }
+  if (list) html += `<${list.tag}>${list.items.join('')}</${list.tag}>`;
+  return html;
 }
 
 // ===== Rich Text =====
@@ -409,6 +603,29 @@ function rich(rt: any[]): string {
   if (!rt?.length) return '';
   return rt
     .map((r: any) => {
+      // 인라인 수식
+      if (r.type === 'equation') {
+        return `<code class="notion-inline-equation">${esc(r.equation.expression)}</code>`;
+      }
+      // 멘션
+      if (r.type === 'mention') {
+        const m = r.mention;
+        if (m.type === 'date') {
+          const start = m.date?.start || '';
+          const end = m.date?.end ? ` → ${m.date.end}` : '';
+          return `<span class="notion-mention-date">📅 ${esc(start + end)}</span>`;
+        }
+        if (m.type === 'user') {
+          return `<span class="notion-mention-user">👤 ${esc(r.plain_text)}</span>`;
+        }
+        if (m.type === 'page') {
+          return `<a class="notion-mention-page" href="#">📄 ${esc(r.plain_text)}</a>`;
+        }
+        if (m.type === 'link_preview') {
+          return `<a href="${m.link_preview.url}" target="_blank" rel="noopener">${esc(r.plain_text)}</a>`;
+        }
+      }
+
       let t = esc(r.plain_text);
       const a = r.annotations;
       if (a?.bold) t = `<strong>${t}</strong>`;
